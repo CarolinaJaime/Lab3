@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-// TODO CheckStyle: Wrong lexicographical order for 'java.util.HashMap' import (remove this comment once resolved)
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,6 +14,10 @@ import java.util.Map;
 public class CountryCodeConverter {
 
     // TODO Task: pick appropriate instance variable(s) to store the data necessary for this class
+    // Map to store country code -> country name
+    private final Map<String, String> codeToCountryMap = new HashMap<>();
+    // Map to store country name -> country code
+    private final Map<String, String> countryToCodeMap = new HashMap<>();
 
     /**
      * Default constructor which will load the country codes from "country-codes.txt"
@@ -36,6 +39,20 @@ public class CountryCodeConverter {
                     .getClassLoader().getResource(filename).toURI()));
 
             // TODO Task: use lines to populate the instance variable(s)
+            // Populate the maps using the lines from the file
+            for (String line : lines) {
+                // Assuming each line has format "Country Alpha-2 code Alpha-3 code Numeric"
+                String[] parts = line.split("\\s+");  // Split into 3 parts to keep the full country name
+
+                if (parts.length == 4) {
+                    // The first part is the country name (which might include spaces), the second is Alpha-2 code
+                    String country = parts[0];
+                    String code = parts[2]; // Second part is the Alpha-2 code
+
+                    codeToCountryMap.put(code, country); // Map country code to country name
+                    countryToCodeMap.put(country, code); // Map country name to country code
+                }
+            }
 
         }
         catch (IOException | URISyntaxException ex) {
@@ -51,7 +68,7 @@ public class CountryCodeConverter {
      */
     public String fromCountryCode(String code) {
         // TODO Task: update this code to use an instance variable to return the correct value
-        return code;
+        return codeToCountryMap.get(code);
     }
 
     /**
@@ -61,7 +78,7 @@ public class CountryCodeConverter {
      */
     public String fromCountry(String country) {
         // TODO Task: update this code to use an instance variable to return the correct value
-        return country;
+        return countryToCodeMap.get(country);
     }
 
     /**
@@ -70,6 +87,6 @@ public class CountryCodeConverter {
      */
     public int getNumCountries() {
         // TODO Task: update this code to use an instance variable to return the correct value
-        return 0;
+        return codeToCountryMap.size();
     }
 }
